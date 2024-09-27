@@ -4,7 +4,8 @@ import Login from '@/views/Login.vue';
 import Signup from '@/views/Signup.vue';  // Import Signup view
 import Module from '@/views/Module.vue';  // Import Module view
 import Dashboard from '@/views/Dashboard.vue';  // Import Dashboard view
-import Lesson from '@/views/Lesson.vue';  // Import Lesson view
+import LessonTopic from '@/views/LessonTopic.vue';  // Import Lesson view
+import WatchLesson from '@/views/WatchLesson.vue';  // Import Lesson view
 
 const routes = [
   { path: '/', component: Home, name: 'Home' },  // Home route
@@ -12,7 +13,8 @@ const routes = [
   { path: '/signup', component: Signup, name: 'Signup' },  // Signup route
   { path: '/module', component: Module, name: 'Module' },  // Module route
   { path: '/dashboard', component: Dashboard, name: 'Dashboard', meta: { requiresAuth: true } },  // Dashboard route (requires auth)
-  { path: '/lesson', component: Lesson, name: 'Lesson', meta: { requiresAuth: true } }  // Lesson route (requires auth)
+  { path: '/topic', component: LessonTopic, name: 'LessonTopic', meta: { requiresAuth: true } },  // Lesson route (requires auth)
+  { path: '/lession', component: WatchLesson, name: 'WatchLesson', meta: { requiresAuth: true } }  // Lesson route (requires auth)
 ];
 
 const router = createRouter({

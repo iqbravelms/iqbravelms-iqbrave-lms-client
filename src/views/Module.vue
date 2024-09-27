@@ -13,7 +13,7 @@
             class="cursor-default w-full px-4 py-2 font-medium text-left rtl:text-right text-white bg-blue-700 border-b border-gray-200 rounded-t-lg cursor-pointer focus:outline-none dark:bg-gray-800 dark:border-gray-600">
             Modules : {{ courseName }}
           </button>
-          <button v-for="module in modules" :key="module.id" @click="goToLesson(module.id , module.name)" type="button"
+          <button v-for="module in modules" :key="module.id" @click="goToLessons(module.id , module.name)" type="button"
             class="w-full px-4 py-2 font-medium text-left rtl:text-right border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
             {{ module.name }}
           </button>
@@ -53,10 +53,10 @@ export default {
     onMounted(() => {
       loadModule(); // Load modules when the component is mounted
     });
-    const goToLesson = (moduleId,moduleName) => {
+    const goToLessons = (moduleId,moduleName) => {
       localStorage.setItem('moduleId', moduleId); 
       localStorage.setItem('moduleName', moduleName);
-      router.push({ name: 'Lesson' }); // Navigate to Module page using the router
+      router.push({ name: 'LessonTopic' }); // Navigate to Module page using the router
     };
 
     return {
@@ -64,7 +64,7 @@ export default {
       loading,
       error,
       courseName,
-      goToLesson,
+      goToLessons,
     };
   },
   name: 'LearningModule',

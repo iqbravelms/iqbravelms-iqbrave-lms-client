@@ -83,7 +83,7 @@ async function login() {
     localStorage.setItem('token', response.data.token);
 
     // Redirect to dashboard after successful login
-    router.push('/lesson');
+    router.push('/');
   } catch (error) {
     console.error('Login failed:', error);
     alert('Invalid credentials');
