@@ -12,7 +12,11 @@
 </template>
 <!-- footer.html -->
 
-<script setup>
+<script>
+export default {
+    name: 'AppFooter', // or 'SiteFooter'
+    // other component options
+}
 </script>
 <style scoped> 
 footer {

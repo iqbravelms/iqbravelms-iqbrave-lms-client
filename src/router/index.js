@@ -1,16 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
 import Login from '@/views/Login.vue';
-import Signup from '@/views/Signup.vue';  // Make sure this is imported
-import Module from '@/views/Module.vue'; // Import the Module component
-import Dashboard from '@/views/Dashboard.vue';
+import Signup from '@/views/Signup.vue';  // Import Signup view
+import Module from '@/views/Module.vue';  // Import Module view
+import Dashboard from '@/views/Dashboard.vue';  // Import Dashboard view
+import Lesson from '@/views/Lesson.vue';  // Import Lesson view
 
 const routes = [
-  { path: '/', component: Home, name: 'Home' },
+  { path: '/', component: Home, name: 'Home' },  // Home route
   { path: '/login', component: Login, name: 'Login' },  // Login route
   { path: '/signup', component: Signup, name: 'Signup' },  // Signup route
-  { path: '/module', component: Module, name: 'Module' },
-  { path: '/dashboard', component: Dashboard, name: 'Dashboard', meta: { requiresAuth: true } }
+  { path: '/module', component: Module, name: 'Module' },  // Module route
+  { path: '/dashboard', component: Dashboard, name: 'Dashboard', meta: { requiresAuth: true } },  // Dashboard route (requires auth)
+  { path: '/lesson', component: Lesson, name: 'Lesson', meta: { requiresAuth: true } }  // Lesson route (requires auth)
 ];
 
 const router = createRouter({
@@ -18,14 +20,22 @@ const router = createRouter({
   routes
 });
 
-// Navigation guard to protect dashboard route
+// Navigation guard to protect routes
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token');
-  if (to.matched.some(record => record.meta.requiresAuth) && !token) {
-    next({ name: 'Login' });  // Redirect to login if not authenticated
+  const token = localStorage.getItem('token');  // Get token from localStorage
+  const isAuthenticated = !!token;  // Check if token exists (user is authenticated)
+
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    // Redirect to login if the route requires authentication and user is not authenticated
+    next({ name: 'Login' });
+  } else if (to.name === 'Login' && isAuthenticated) {
+    // Prevent already logged-in user from accessing login page
+    next({ name: 'Home' });  // Redirect to Dashboard or another protected page
   } else {
-    next();  // Proceed to the requested route
+    // Proceed to the requested route
+    next();
   }
 });
+
 
 export default router;
