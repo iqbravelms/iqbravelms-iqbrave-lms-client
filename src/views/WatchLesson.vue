@@ -118,6 +118,7 @@
 <script>
 import axios from 'axios'; // Import Axios
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
     setup() {
@@ -126,6 +127,7 @@ export default {
         const loading = ref(true);
         const loadingAssignment = ref(false);
         const error = ref(null);
+        const router = useRouter();
         const errorAssignment = ref(null);
         const moduleName = localStorage.getItem('moduleName');
         const token = localStorage.getItem('token');
@@ -142,6 +144,8 @@ export default {
                 });
                 data.value = response.data.lesson;
             } catch (err) {
+                router.push({ name: 'Login' });
+                localStorage.removeItem('token');
                 error.value = err.response ? err.response.data.message : err.message;
             } finally {
                 loading.value = false;
@@ -154,12 +158,17 @@ export default {
             try {
                 const response = await axios.get(`http://localhost:8000/api/assignments/${lessonId}`, {
                     headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
                         'Authorization': `Bearer ${token}`
                     }
                 });
                 assignments.value = response.data.assignments;
                 showAssignmentButton.value = false;
             } catch (err) {
+                if (err.response && err.response.status === 401) {
+                    router.push({ name: 'Login' });  // Redirect to login if unauthorized
+                    localStorage.removeItem('token'); // Remove the invalid token
+                }
                 errorAssignment.value = err.response ? err.response.data.message : err.message;
             } finally {
                 loadingAssignment.value = false;
