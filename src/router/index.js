@@ -4,8 +4,9 @@ import Login from '@/views/Login.vue';
 import Signup from '@/views/Signup.vue';  // Import Signup view
 import Module from '@/views/Module.vue';  // Import Module view
 import Dashboard from '@/views/Dashboard.vue';  // Import Dashboard view
-import LessonTopic from '@/views/LessonTopic.vue';  // Import Lesson view
-import WatchLesson from '@/views/WatchLesson.vue';  // Import Lesson view
+import LessonTopic from '@/views/LessonTopic.vue';  // Import Lesson Topic view
+import WatchLesson from '@/views/WatchLesson.vue';  // Import Watch Lesson view
+import AdminDashboard from '@/views/admin/Dashboard.vue';  // Import Admin Dashboard view
 
 const routes = [
   { path: '/', component: Home, name: 'Home' },  // Home route
@@ -13,8 +14,9 @@ const routes = [
   { path: '/signup', component: Signup, name: 'Signup' },  // Signup route
   { path: '/module', component: Module, name: 'Module' },  // Module route
   { path: '/dashboard', component: Dashboard, name: 'Dashboard', meta: { requiresAuth: true } },  // Dashboard route (requires auth)
-  { path: '/topic', component: LessonTopic, name: 'LessonTopic', meta: { requiresAuth: true } },  // Lesson route (requires auth)
-  { path: '/lession', component: WatchLesson, name: 'WatchLesson', meta: { requiresAuth: true } }  // Lesson route (requires auth)
+  { path: '/topic', component: LessonTopic, name: 'LessonTopic', meta: { requiresAuth: true } },  // Lesson Topic route (requires auth)
+  { path: '/lesson', component: WatchLesson, name: 'WatchLesson', meta: { requiresAuth: true } },  // Watch Lesson route (requires auth)
+  { path: '/admindashboard', component: AdminDashboard, name: 'AdminDashboard', meta: { requiresAuth: true } }  // Admin Dashboard route (requires auth)
 ];
 
 const router = createRouter({
@@ -22,22 +24,31 @@ const router = createRouter({
   routes
 });
 
-// Navigation guard to protect routes
+// Navigation Guards
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token');  // Get token from localStorage
-  const isAuthenticated = !!token;  // Check if token exists (user is authenticated)
+  const token = localStorage.getItem('token');
+  const isAuthenticated = !!token;
 
+  let userRole = null;
+  if (token) {
+    try {
+      userRole = JSON.parse(atob(token.split('.')[1]))?.data?.role || null;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+    }
+  }
+
+
+  // Check authentication and authorization
   if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-    // Redirect to login if the route requires authentication and user is not authenticated
     next({ name: 'Login' });
   } else if (to.name === 'Login' && isAuthenticated) {
-    // Prevent already logged-in user from accessing login page
-    next({ name: 'Home' });  // Redirect to Dashboard or another protected page
+    next({ name: 'Home' });
+  } else if (to.name === 'AdminDashboard' && userRole !== 'admin') {
+    next({ name: 'Home' });
   } else {
-    // Proceed to the requested route
     next();
   }
 });
-
 
 export default router;
