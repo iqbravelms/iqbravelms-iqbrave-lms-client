@@ -125,7 +125,8 @@
                                     <br>
 
                                     <!-- Submit Assignment Section -->
-                                    <form @submit.prevent="login">
+                                    <form
+                                        @submit.prevent="submitAssignment(assignment.student_assignments[0].AssignmentFileId)">
                                         <div class="flex flex-col md:flex-row items-center justify-between">
                                             <!-- Label on the left -->
                                             <label for="DriveLink"
@@ -135,19 +136,20 @@
 
                                             <!-- Textbox centered -->
                                             <div class="flex-1 mx-4 w-full">
-                                                <input id="DriveLink" v-model="DriveLink" name="DriveLink" type="text"
+                                                <input id="driveLink" v-model="driveLink" name="driveLink" type="text"
                                                     required
                                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
                                                     placeholder="Enter your google drive link" />
                                             </div>
 
                                             <!-- Button on the right -->
-                                            <button
+                                            <button type="submit"
                                                 class="text-white w-full md:w-auto bg-green-400 hover:bg-blue-500 font-medium rounded-lg text-sm px-4 py-2 sm:px-5 sm:py-2.5">
                                                 Submit Assignment
                                             </button>
                                         </div>
                                     </form>
+
 
                                 </div>
                             </div>
@@ -181,7 +183,33 @@ export default {
         const moduleName = localStorage.getItem('moduleName');
         const token = localStorage.getItem('token');
         const showAssignmentButton = ref(true);
+        const driveLink = ref('');
+        const loadingAssignmentSubmit = ref(false); // Define loading state
+        const errorAssignmentSubmit = ref(null); // Define error state
 
+
+        const submitAssignment = async (id) => {
+            loadingAssignmentSubmit.value = true;
+            try {
+                const data = new URLSearchParams();
+                data.append('assignmentId', id);
+                console.log(driveLink.value);
+                data.append('driveLink', driveLink.value);
+
+                const response = await axios.post('http://localhost:8000/api/submitassignment', data, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                console.log(response.data);
+            } catch (err) {
+                console.log(err);
+                errorAssignmentSubmit.value = err.response ? err.response.data.message : err.message;
+            } finally {
+                loadingAssignmentSubmit.value = false;
+            }
+        };
         const loadLesson = async () => {
             const topicId = localStorage.getItem('topicId');
             try {
@@ -246,7 +274,9 @@ export default {
             errorAssignment,
             token,
             getAssignments,
+            submitAssignment,
             showAssignmentButton,
+            driveLink,
             extractDriveId // Return the function to use it in the template
         };
     },
