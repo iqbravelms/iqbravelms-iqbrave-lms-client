@@ -9,6 +9,9 @@ import WatchLesson from '@/views/WatchLesson.vue';  // Import Watch Lesson view
 import AdminDashboard from '@/views/admin/Dashboard.vue';  // Import Admin Dashboard view
 import AdminRegister from '@/views/admin/AdminRegister.vue';
 import ViewStudents from '@/views/admin/ViewStudents.vue';
+import Course from '@/views/admin/CourseList.vue';
+import AddModule from '@/views/admin/AddModule.vue';
+import AddLesson from '@/views/admin/AddLesson.vue';
 const routes = [
   { path: '/', component: Home, name: 'Home' },  // Home route
   { path: '/login', component: Login, name: 'Login' },  // Login route
@@ -19,8 +22,11 @@ const routes = [
   { path: '/lesson', component: WatchLesson, name: 'WatchLesson', meta: { requiresAuth: true } },  // Watch Lesson route (requires auth)
   { path: '/admindashboard', component: AdminDashboard, name: 'AdminDashboard', meta: { requiresAuth: true },
   children: [
-    { path: '/register', component: AdminRegister },
-    { path: '/students', component: ViewStudents },
+    { path: '/register', component: AdminRegister , name: 'AdminRegister', meta: { requiresAuth: true }},
+    { path: '/students', component: ViewStudents , name: 'ViewStudents', meta: { requiresAuth: true }},
+    { path: '/Course', component: Course , name: 'CourseList', meta: { requiresAuth: true }},
+    { path: '/addmodule', component: AddModule , name: 'AddModule', meta: { requiresAuth: true }},
+    { path: '/addlesson', component: AddLesson , name: 'AddLesson', meta: { requiresAuth: true }},
   ] }  // Admin Dashboard route (requires auth)
 ];
 
@@ -50,6 +56,16 @@ router.beforeEach((to, from, next) => {
   } else if (to.name === 'Login' && isAuthenticated) {
     next({ name: 'Home' });
   } else if (to.name === 'AdminDashboard' && userRole !== 'admin') {
+    next({ name: 'Home' });
+  } else if (to.name === 'AdminRegister' && userRole !== 'admin') {
+    next({ name: 'Home' });
+  } else if (to.name === 'ViewStudents' && userRole !== 'admin') {
+    next({ name: 'Home' });
+  } else if (to.name === 'CourseList' && userRole !== 'admin') {
+    next({ name: 'Home' });
+  } else if (to.name === 'AddModule' && userRole !== 'admin') {
+    next({ name: 'Home' });
+  } else if (to.name === 'AddLesson' && userRole !== 'admin') {
     next({ name: 'Home' });
   } else {
     next();

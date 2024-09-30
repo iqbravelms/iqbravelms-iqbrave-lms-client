@@ -1,13 +1,16 @@
 <template>
-  <div class="flex h-screen bg-gray-100 relative">
+  <div class="flex bg-gray-100 relative">
     <!-- Sidebar for large screens -->
     <aside
       :class="['fixed inset-y-0 left-0 w-64 bg-blue-900 text-white transform z-50', sidebarOpen ? 'translate-x-0' : '-translate-x-full', 'transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0']"
       @click.stop>
-      <div class="p-4 text-center text-2xl font-bold">Admin Panel</div>
-      <nav class="mt-10">
+      <div class="p-4 text-center text-2xl font-bold mb-4">Admin Panel</div>
+      <nav class="mt-10 mb-8">
         <router-link to="/register" class="block px-4 py-2 hover:bg-blue-700">Admin Registration</router-link>
         <router-link to="/students" class="block px-4 py-2 hover:bg-blue-700">View Students</router-link>
+        <router-link to="/course" class="block px-4 py-2 hover:bg-blue-700">Course</router-link>
+        <router-link to="/addmodule" class="block px-4 py-2 hover:bg-blue-700">Module</router-link>
+        <router-link to="/addlesson" class="block px-4 py-2 hover:bg-blue-700">Lesson</router-link>
       </nav>
     </aside>
 
