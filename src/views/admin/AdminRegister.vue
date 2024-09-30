@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-lg mx-auto bg-white shadow p-6 rounded-lg w-full">
+  <div class="max-w-6xl mx-auto bg-white shadow p-6 rounded-lg w-full">
     <h2 class="text-2xl font-bold mb-6">Admin Registration</h2>
     <form @submit.prevent="registerAdmin">
       <div class="mb-4">

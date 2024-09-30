@@ -12,7 +12,7 @@
     </aside>
 
     <!-- Main Content Overlay (detects outside clicks) -->
-    <div class="flex-1 lg:pl-64 p-6 relative z-10" @click="closeSidebarOnClickOutside">
+    <div class="flex-1 relative z-10" @click="closeSidebarOnClickOutside">
       <!-- Mobile menu button -->
       <button class="lg:hidden p-2 rounded-md text-gray-500 hover:text-white hover:bg-gray-700"
         @click.stop="toggleSidebar">
