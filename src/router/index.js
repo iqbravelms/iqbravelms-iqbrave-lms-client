@@ -7,7 +7,8 @@ import Dashboard from '@/views/Dashboard.vue';  // Import Dashboard view
 import LessonTopic from '@/views/LessonTopic.vue';  // Import Lesson Topic view
 import WatchLesson from '@/views/WatchLesson.vue';  // Import Watch Lesson view
 import AdminDashboard from '@/views/admin/Dashboard.vue';  // Import Admin Dashboard view
-
+import AdminRegister from '@/views/admin/AdminRegister.vue';
+import ViewStudents from '@/views/admin/ViewStudents.vue';
 const routes = [
   { path: '/', component: Home, name: 'Home' },  // Home route
   { path: '/login', component: Login, name: 'Login' },  // Login route
@@ -16,7 +17,11 @@ const routes = [
   { path: '/dashboard', component: Dashboard, name: 'Dashboard', meta: { requiresAuth: true } },  // Dashboard route (requires auth)
   { path: '/topic', component: LessonTopic, name: 'LessonTopic', meta: { requiresAuth: true } },  // Lesson Topic route (requires auth)
   { path: '/lesson', component: WatchLesson, name: 'WatchLesson', meta: { requiresAuth: true } },  // Watch Lesson route (requires auth)
-  { path: '/admindashboard', component: AdminDashboard, name: 'AdminDashboard', meta: { requiresAuth: true } }  // Admin Dashboard route (requires auth)
+  { path: '/admindashboard', component: AdminDashboard, name: 'AdminDashboard', meta: { requiresAuth: true },
+  children: [
+    { path: '/register', component: AdminRegister },
+    { path: '/students', component: ViewStudents },
+  ] }  // Admin Dashboard route (requires auth)
 ];
 
 const router = createRouter({
