@@ -47,10 +47,18 @@
             <div v-show="isDropdownOpen" @mouseleave="isDropdownOpen = false"
               class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
               <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownHoverButton">
-                <li>
+                <!-- Check if the user role is 'admin' -->
+                <li v-if="jwt.data.role === 'admin'">
+                  <router-link to="/admindashboard"
+                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Admin
+                    Dashboard</router-link>
+                </li>
+                <!-- Check if the user role is 'user' -->
+                <li v-else-if="jwt.data.role === 'user'">
                   <router-link to="/dashboard"
                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</router-link>
                 </li>
+                <!-- Logout option for both roles -->
                 <li>
                   <button @click="logout"
                     class="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign
@@ -58,6 +66,7 @@
                 </li>
               </ul>
             </div>
+
           </li>
 
           <!-- Links for non-logged-in users -->
