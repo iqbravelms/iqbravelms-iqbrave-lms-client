@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-6xl mx-auto bg-white shadow p-6 rounded-lg w-full">
-    <h2 class="text-2xl font-bold mb-6">All Students</h2>
+    <h2 class="text-2xl font-bold mb-6">All Courses</h2>
     <div>
       <div v-if="loading">Loading module...</div>
       <div v-if="error" class="error">Error loading module: {{ error }}</div>
@@ -46,9 +46,9 @@
 
     <!-- Responsive Admin Registration Form -->
     <div class="mt-10">
-      <button class="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 p-2" @click="addNewUser()">Add new user
+      <button class="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 p-2" @click="addNewUser()">Add new course
         +</button>
-      <h2 class="text-2xl font-bold mb-6">Admin Update</h2>
+      <h2 class="text-2xl font-bold mb-6">Course Update</h2>
       <form @submit.prevent="adminUpdate">
         <div class="mb-4" v-if="edit === true">
           <label for="id" class="block mb-2 text-sm ">ID</label>
@@ -59,7 +59,7 @@
           <input v-model="name" type="text" id="name" class="w-full border px-2 sm:px-4 py-2 rounded-md">
         </div>
 
-        <button v-if="edit === true" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+        <button v-if="edit === true " class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
           @click="updateCourse()">Update</button>
         <button v-if="edit === false" @click="CourseRegister()"
           class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Register</button>
