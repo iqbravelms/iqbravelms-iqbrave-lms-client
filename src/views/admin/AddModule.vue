@@ -45,7 +45,7 @@
             <h2 class="text-2xl font-bold mb-6">Add Module</h2>
             <form>
                 <label for="" class="text-xl font-bold mb-6">Select Course name :</label>
-                <select name="" id="" class="text-xl mb-6" @change="loadModules($event.target.value)"
+                <select name="" id="" class="text-xl mb-6" 
                     v-model="courseId">
                     <option v-for="course in courses" :key="course.id" :value="course.id">{{ course.name }}</option>
                 </select>
