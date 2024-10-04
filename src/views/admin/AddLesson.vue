@@ -128,37 +128,54 @@
 
             </div>
 
-            <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-                @click="updateStep()">Update Step</button>
+            <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700" @click="updateStep()">Update
+                Step</button>
 
         </div>
         <!-- Add section -->
         <div>
             <h2 class="text-2xl font-bold mb-6">Add Lesson</h2>
             <form @submit.prevent="registerAdmin">
+
                 <div class="mb-4">
-                    <label for="name" class="block mb-2 text-sm">Topic</label>
-                    <input v-model="name" type="text" id="name" class="w-full border px-2 sm:px-4 py-2 rounded-md">
-                    <label for="name" class="block mb-2 text-sm">Link</label>
-                    <input v-model="name" type="text" id="name" class="w-full border px-2 sm:px-4 py-2 rounded-md">
-                    <label for="name" class="block mb-2 text-sm">Name</label>
-                    <input v-model="name" type="text" id="name" class="w-full border px-2 sm:px-4 py-2 rounded-md">
+                    <label for="topicName" class="block mb-2 text-sm">Topic</label>
+                    <input v-model="topicName" type="text" id="topicName"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
 
-                    <label for="name" class="block mb-2 text-sm">Add steps</label>
+                    <label for="linkName" class="block mb-2 text-sm">Link</label>
+                    <input v-model="linkName" type="text" id="linkName"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
 
-                    <div v-for="(step, index) in steps" :key="index" class="mb-4">
-                        <label :for="'step-' + index" class="block mb-2 text-sm">Step {{ index + 1 }}</label>
-                        <input v-model="steps[index]" :id="'step-' + index" type="text"
-                            class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                    <label for="noteName" class="block mb-2 text-sm">Note</label>
+                    <input v-model="noteName" type="text" id="noteName"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+
+                    <div>
+                        <label for="name" class="block mb-2 text-sm">Add steps</label>
+
+                        <!-- Loop through stepsAdd array to display each step input -->
+                        <div v-for="(step, index) in stepsAdd" :key="index" class="mb-4">
+                            <label :for="'step-no' + index" class="block mb-2 text-sm">Step No {{ index + 1 }}</label>
+                            <input v-model="stepsAdd[index].number" :id="'step-no' + index" type="text"
+                                class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                            <label :for="'step-description' + index" class="block mb-2 text-sm">Description {{ index + 1
+                                }}</label>
+                            <input v-model="stepsAdd[index].description" :id="'step-description' + index" type="text"
+                                class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                        </div>
+
+                        <!-- Add more steps when the button is clicked -->
+                        <button @click="addMoreStep"
+                            class="px-4 py-2 font-medium text-left rtl:text-right border-b border-gray-200 cursor-pointer hover:bg-blue-900 bg-blue-700 text-white">
+                            Add more steps +
+                        </button>
                     </div>
-                    <button @click="addStep"
-                        class="px-4 py-2 font-medium text-left rtl:text-right border-b border-gray-200 cursor-pointer hover:bg-blue-900  bg-blue-700 text-white">
-                        Add more steps +
+
+                    <!-- Submit the lesson -->
+                    <button @click="addLesson" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+                        Add Module
                     </button>
-
                 </div>
-
-                <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Add Module</button>
             </form>
         </div>
     </div>
@@ -170,7 +187,6 @@ import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 export default {
     setup() {
-
         const stepId = ref('');
         const LessonId = ref('');
         const stepNo = ref('');
@@ -189,6 +205,36 @@ export default {
         const lessons = ref([]);
         const loading = ref(true); // Loading state
         const error = ref(null); // Error handling
+        const topicName = ref('');
+        const linkName = ref('');
+        const noteName = ref('');
+        const stepsAdd = ref([{ number: '', description: '' }]);
+        const addLesson = async () => {
+            const token = localStorage.getItem('token');
+            try {
+                const formData = new FormData();
+                formData.append('moduleId', moduleId.value);
+                formData.append('topicName', topicName.value);
+                formData.append('linkName', linkName.value);
+                formData.append('noteName', noteName.value);
+                formData.append('steps', JSON.stringify(stepsAdd.value)); // Convert stepsAdd to a JSON string
+
+                const response = await axios.post('http://localhost:8000/api/lessonadd', formData, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                console.log(response.data);
+                // Handle success here, e.g., clear form or give feedback
+            } catch (err) {
+                if (err.response && err.response.status === 401) {
+                    router.push({ name: 'Login' }); // Redirect to login if unauthorized
+                    localStorage.removeItem('token');
+                }
+                console.error(err.message); // Handle error message
+            }
+        };
         const loadCourses = async () => {
             const token = localStorage.getItem('token');
 
@@ -213,6 +259,7 @@ export default {
         };
         const loadModules = async (id) => {
             const token = localStorage.getItem('token');
+            moduleId.value = id;
 
             try {
                 const response = await axios.get(`http://localhost:8000/api/getallmodules/${id}`, {
@@ -351,6 +398,9 @@ export default {
             stepNo.value = step.StepNo;
             stepDescription.value = step.description;
         }
+        const addMoreStep = () => {
+            stepsAdd.value.push({ number: '', description: '' });
+        };
         onMounted(() => {
             loadCourses();
         });
@@ -378,6 +428,12 @@ export default {
             stepNo,
             updateStep,
             stepDescription,
+            topicName,
+            linkName,
+            noteName,
+            stepsAdd,
+            addMoreStep,
+            addLesson
         }
     },
     name: 'AddLesson'
