@@ -24,7 +24,7 @@
                         <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">Topic</th>
                         <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">Link</th>
                         <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">Note</th>
-                        <th scope="col" colspan="3" class="px-2 sm:px-4 py-2 sm:py-3 text-center">Action</th>
+                        <th scope="col" colspan="4" class="px-2 sm:px-4 py-2 sm:py-3 text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,6 +41,10 @@
                                 @click="editLesson(lesson)">Edit</a>
                         </td>
                         <td class="px-2 sm:px-4 py-4 text-right">
+                            <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                @click="loadAssignment(lesson.id)">Assignment</a>
+                        </td>
+                        <td class="px-2 sm:px-4 py-4 text-right">
                             <a href="#"
                                 class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Deactivate</a>
                         </td>
@@ -49,6 +53,46 @@
                 </tbody>
             </table>
         </div>
+        <!-- assignment  -->
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
+            <label for="" class="text-xl font-bold mb-6">Assignment :</label>
+            <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">AssignmentId </th>
+                        <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">AssignmentName</th>
+                        <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">AssignmentNo</th>
+                        <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">AssignmentLink</th>
+                        <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">file_id</th>
+                        <th scope="col" class="px-2 sm:px-4 py-2 sm:py-3">structure</th>
+                        <th scope="col" colspan="3" class="px-2 sm:px-4 py-2 sm:py-3 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(assignment) in assignments" :key="assignment.assignment_id"
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <th scope="row" class="px-2 sm:px-4 py-4 font-medium text-gray-900 dark:text-white">
+                            {{ assignment.assignment_id }}</th>
+                        <td class="px-2 sm:px-4 py-4">{{ assignment.files[0].AssignmentName }}</td>
+                        <td class="px-2 sm:px-4 py-4">{{ assignment.files[0].AssignmentNo }}</td>
+                        <td class="px-2 sm:px-4 py-4">{{ assignment.files[0].Link }}</td>
+                        <td class="px-2 sm:px-4 py-4">{{ assignment.files[0].file_id }}</td>
+                        <td class="px-2 sm:px-4 py-4">{{ assignment.structure }}</td>
+                        <td class="px-2 sm:px-4 py-4 text-right">
+                            <a @click="editStep(assignment)" href="#"
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        </td>
+                        <td class="px-2 sm:px-4 py-4 text-right">
+                            <a href="#"
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Deactivate</a>
+                        </td>
+                    </tr>
+                    <!-- Repeat rows for other assignments -->
+                </tbody>
+
+            </table>
+        </div>
+        <!-- assignment  -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
             <label for="" class="text-xl font-bold mb-6">lessons Steps:</label>
             <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -241,6 +285,7 @@ export default {
         const link = ref('');
         const note = ref('');
         const courses = ref([]);
+        const assignments = ref([]);
         const router = useRouter();
         const modules = ref([]);
         const steps = ref([]);
@@ -251,6 +296,28 @@ export default {
         const linkName = ref('');
         const noteName = ref('');
         const stepsAdd = ref([{ number: '', description: '' }]);
+        const loadAssignment = async (id) => {
+
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await axios.get(`http://localhost:8000/api/getassignmentsforadmin/${id}`, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                assignments.value = response.data.assignments;
+                console.log(response.data); // Handle modules response
+            } catch (err) {
+                if (err.response && err.response.status === 401) {
+                    router.push({ name: 'Login' }); // Redirect to login if unauthorized
+                    localStorage.removeItem('token');
+
+                }
+                error.value = err.message; // Set error message
+            }
+        };
         const addLesson = async () => {
             const token = localStorage.getItem('token');
             try {
@@ -496,6 +563,8 @@ export default {
             assignmentNo3,
             assignmentName3,
             Link3,
+            loadAssignment,
+            assignments
         }
     },
     name: 'AddLesson'
