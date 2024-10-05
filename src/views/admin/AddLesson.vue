@@ -149,7 +149,6 @@
                     <label for="noteName" class="block mb-2 text-sm">Note</label>
                     <input v-model="noteName" type="text" id="noteName"
                         class="w-full border px-2 sm:px-4 py-2 rounded-md" />
-
                     <div>
                         <label for="name" class="block mb-2 text-sm">Add steps</label>
 
@@ -170,10 +169,43 @@
                             Add more steps +
                         </button>
                     </div>
+                    <label for="structure" class="block mb-2 text-sm">Structure</label>
+                    <input v-model="structure" type="text" id="structure"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+
+                    <label for="assignmentNo1" class="block mb-2 text-sm">Assignment No 1</label>
+                    <input v-model="assignmentNo1" type="text" id="assignmentNo1"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                    <label for="assignmentName1" class="block mb-2 text-sm">Assignment Name 1</label>
+                    <input v-model="assignmentName1" type="text" id="assignmentName1"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                    <label for="Link1" class="block mb-2 text-sm">Link 1</label>
+                    <input v-model="Link1" type="text" id="Link1" class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                    <label for="assignmentNo2" class="block mb-2 text-sm">Assignment No 2</label>
+                    <input v-model="assignmentNo2" type="text" id="assignmentNo2"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                    <label for="assignmentName2" class="block mb-2 text-sm">Assignment Name 2</label>
+                    <input v-model="assignmentName2" type="text" id="assignmentName2"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                    <label for="Link2" class="block mb-2 text-sm">Link 2</label>
+                    <input v-model="Link2" type="text" id="Link2" class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+
+
+
+                    <label for="assignmentNo3" class="block mb-2 text-sm">Assignment No 3</label>
+                    <input v-model="assignmentNo3" type="text" id="assignmentNo3"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                    <label for="assignmentName3" class="block mb-2 text-sm">Assignment Name 3</label>
+                    <input v-model="assignmentName3" type="text" id="assignmentName3"
+                        class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+                    <label for="Link3" class="block mb-2 text-sm">Link 3</label>
+                    <input v-model="Link3" type="text" id="Link3" class="w-full border px-2 sm:px-4 py-2 rounded-md" />
+
+
 
                     <!-- Submit the lesson -->
                     <button @click="addLesson" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
-                        Add Module
+                        Add Lesson
                     </button>
                 </div>
             </form>
@@ -187,6 +219,16 @@ import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 export default {
     setup() {
+        const structure = ref('');
+        const assignmentNo1 = ref('');
+        const assignmentName1 = ref('');
+        const Link1 = ref('');
+        const assignmentNo2 = ref('');
+        const assignmentName2 = ref('');
+        const Link2 = ref('');
+        const assignmentNo3 = ref('');
+        const assignmentName3 = ref('');
+        const Link3 = ref('');
         const stepId = ref('');
         const LessonId = ref('');
         const stepNo = ref('');
@@ -218,6 +260,16 @@ export default {
                 formData.append('linkName', linkName.value);
                 formData.append('noteName', noteName.value);
                 formData.append('steps', JSON.stringify(stepsAdd.value)); // Convert stepsAdd to a JSON string
+                formData.append('structure', structure.value);
+                formData.append('assignmentNo1', assignmentNo1.value);
+                formData.append('assignmentName1', assignmentName1.value);
+                formData.append('Link1', Link1.value);
+                formData.append('assignmentNo2', assignmentNo2.value);
+                formData.append('assignmentName2', assignmentName2.value);
+                formData.append('Link2', Link2.value);
+                formData.append('assignmentNo3', assignmentNo3.value);
+                formData.append('assignmentName3', assignmentName3.value);
+                formData.append('Link3', Link3.value);
 
                 const response = await axios.post('http://localhost:8000/api/lessonadd', formData, {
                     headers: {
@@ -433,7 +485,17 @@ export default {
             noteName,
             stepsAdd,
             addMoreStep,
-            addLesson
+            addLesson,
+            structure,
+            assignmentNo1,
+            assignmentName1,
+            Link1,
+            assignmentNo2,
+            assignmentName2,
+            Link2,
+            assignmentNo3,
+            assignmentName3,
+            Link3,
         }
     },
     name: 'AddLesson'
