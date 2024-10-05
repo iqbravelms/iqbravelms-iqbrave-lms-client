@@ -79,8 +79,15 @@
                         <td class="px-2 sm:px-4 py-4">{{ assignment.files[0].file_id }}</td>
                         <td class="px-2 sm:px-4 py-4">{{ assignment.structure }}</td>
                         <td class="px-2 sm:px-4 py-4 text-right">
-                            <a @click="editStep(assignment)" href="#"
-                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                            <a @click.prevent="editAssignment(
+                                assignment.assignment_id,
+                                assignment.files[0].AssignmentName,
+                                assignment.files[0].AssignmentNo,
+                                assignment.files[0].Link,
+                                assignment.files[0].file_id,
+                                assignment.structure
+                            )" href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+
                         </td>
                         <td class="px-2 sm:px-4 py-4 text-right">
                             <a href="#"
@@ -91,6 +98,36 @@
                 </tbody>
 
             </table>
+        </div>
+        <div class="mt-10" v-if="assignmentEdit === true">
+            <!-- edit lesson -->
+            <div>
+                <h2 class="text-2xl font-bold mb-6">Edit Assignment</h2>
+
+                <label for="asFileId">File Id</label>
+                <input type="text" name="asFileId" id="asFileId" v-model="asFileId"
+                    class="w-full border px-2 sm:px-4 py-2 rounded-md"><br>
+                <label for="asId">Assignment Id</label>
+                <input type="text" name="asId" id="asId" v-model="asId"
+                    class="w-full border px-2 sm:px-4 py-2 rounded-md"><br>
+                <label for="asNo">Assignment No</label>
+                <input type="text" name="asNo" id="asNo" v-model="asNo"
+                    class="w-full border px-2 sm:px-4 py-2 rounded-md"><br>
+                <label for="asName">Assignment Name</label>
+                <input type="text" name="asName" id="asName" v-model="asName"
+                    class="w-full border px-2 sm:px-4 py-2 rounded-md"><br>
+                <label for="asLink">Link</label>
+                <input type="text" name="asLink" id="asLink" v-model="asLink"
+                    class="w-full border px-2 sm:px-4 py-2 rounded-md"><br>
+                <label for="asStructure">Structure</label>
+                <input type="text" name="asStructure" id="asStructure" v-model="asStructure"
+                    class="w-full border px-2 sm:px-4 py-2 rounded-md"><br>
+
+            </div>
+
+            <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                @click="updateAssignment()">Update Assignment</button>
+
         </div>
         <!-- assignment  -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
@@ -263,6 +300,12 @@ import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 export default {
     setup() {
+        const asFileId = ref('');
+        const asId = ref('');
+        const asNo = ref('');
+        const asName = ref('');
+        const asLink = ref('');
+        const asStructure = ref('');
         const structure = ref('');
         const assignmentNo1 = ref('');
         const assignmentName1 = ref('');
@@ -280,6 +323,7 @@ export default {
         const lessonId = ref('');
         const lessonEdit = ref(false);
         const stepEdit = ref(false);
+        const assignmentEdit = ref(false);
         const moduleId = ref('');
         const topic = ref('');
         const link = ref('');
@@ -296,6 +340,46 @@ export default {
         const linkName = ref('');
         const noteName = ref('');
         const stepsAdd = ref([{ number: '', description: '' }]);
+        const editAssignment = (id, name, no, link, file_id, structure) => {
+            assignmentEdit.value = true;
+            asId.value = id;
+            asNo.value = no;
+            asName.value = name;
+            asFileId.value = file_id;
+            asLink.value = link;
+            asStructure.value = structure;
+        }
+        const updateAssignment = async () => {
+            const token = localStorage.getItem('token');
+
+            try {
+                const formData = new FormData();
+                formData.append('assignmentId', asId.value);
+                formData.append('assignmentNo', asNo.value);
+                formData.append('assignmentName', asName.value);
+                formData.append('assignmentFileId', asFileId.value);
+                formData.append('assignmentLink', asLink.value);
+                formData.append('assignmentStructure', asStructure.value);
+
+                const response = await axios.post('http://localhost:8000/api/updateassignment', formData, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                console.log(response.data)
+                // users.value = response.data.users; // Update users array from response
+            } catch (err) {
+                if (err.response && err.response.status === 401) {
+                    router.push({ name: 'Login' }); // Redirect to login if unauthorized
+                    localStorage.removeItem('token');
+                }
+                error.value = err.message; // Set error message
+            } finally {
+                loading.value = false; // Set loading to false after fetching
+            }
+
+        };
         const loadAssignment = async (id) => {
 
             const token = localStorage.getItem('token');
@@ -500,6 +584,7 @@ export default {
             }
 
         };
+
         const editLesson = (lesson) => {
             stepEdit.value = false;
             lessonEdit.value = true;
@@ -564,7 +649,16 @@ export default {
             assignmentName3,
             Link3,
             loadAssignment,
-            assignments
+            assignments,
+            assignmentEdit,
+            updateAssignment,
+            editAssignment,
+            asId,
+            asNo,
+            asName,
+            asLink,
+            asStructure,
+            asFileId,
         }
     },
     name: 'AddLesson'
