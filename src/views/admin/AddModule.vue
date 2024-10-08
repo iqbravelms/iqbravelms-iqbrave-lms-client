@@ -1,8 +1,10 @@
 <template>
     <div class="max-w-6xl mx-auto bg-white shadow p-6 rounded-lg w-full">
         <h2 class="text-2xl font-bold mb-6">Show Modules</h2>
+        <h2 class="text-2xl font-bold mb-6" v-if="error">{{error}}</h2>
         <label for="" class="text-xl font-bold mb-6">Select Course name :</label>
         <select name="" id="" class="text-xl mb-6" @change="loadModules($event.target.value)">
+            <option value="Select">Select Course name</option>
             <option v-for="course in courses" :key="course.id" :value="course.id">{{ course.name }}</option>
         </select>
 
@@ -45,8 +47,7 @@
             <h2 class="text-2xl font-bold mb-6">Add Module</h2>
             <form>
                 <label for="" class="text-xl font-bold mb-6">Select Course name :</label>
-                <select name="" id="" class="text-xl mb-6" 
-                    v-model="courseId">
+                <select name="" id="" class="text-xl mb-6" v-model="courseId">
                     <option v-for="course in courses" :key="course.id" :value="course.id">{{ course.name }}</option>
                 </select>
                 <div class="mb-4" v-if="edit === true">
@@ -104,7 +105,11 @@ export default {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-                courseId.value = response.data.courses[1].id;
+                if (response.data.status === 'error') {
+                    error.value = response.data.message;
+                }
+                console.log(response.data)
+                courseId.value = response.data.courses[0].id;
                 courses.value = response.data.courses;
             } catch (err) {
                 if (err.response && err.response.status === 401) {

@@ -285,6 +285,7 @@
 
 
                     <!-- Submit the lesson -->
+                    <h2 class="text-2xl font-bold mb-6" v-if="error">{{ error }}</h2>
                     <button @click="addLesson" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
                         Add Lesson
                     </button>
@@ -335,7 +336,7 @@ export default {
         const steps = ref([]);
         const lessons = ref([]);
         const loading = ref(true); // Loading state
-        const error = ref(null); // Error handling
+        const error = ref(''); // Error handling
         const topicName = ref('');
         const linkName = ref('');
         const noteName = ref('');
@@ -367,6 +368,9 @@ export default {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
+                if (response.data.status === 'error') {
+                    error.value = response.data.message;
+                }
                 console.log(response.data)
                 // users.value = response.data.users; // Update users array from response
             } catch (err) {
@@ -428,7 +432,13 @@ export default {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-                console.log(response.data);
+                if (response.data.error) {
+                    error.value = response.data.error;
+
+                } if (response.data.status) {
+                    error.value = response.data.status;
+
+                }
                 // Handle success here, e.g., clear form or give feedback
             } catch (err) {
                 if (err.response && err.response.status === 401) {
@@ -659,6 +669,7 @@ export default {
             asLink,
             asStructure,
             asFileId,
+            error
         }
     },
     name: 'AddLesson'

@@ -2,6 +2,7 @@
   <div>
     <div v-if="loading">Loading module...</div>
     <div v-if="error" class="error">Error loading module: {{ error }}</div>
+    
 
     <div v-if="modules && modules.length">
       <ul class="p-24">
@@ -13,7 +14,7 @@
             class="cursor-default w-full px-4 py-2 font-medium text-left rtl:text-right text-white bg-blue-700 border-b border-gray-200 rounded-t-lg cursor-pointer focus:outline-none dark:bg-gray-800 dark:border-gray-600">
             Modules : {{ courseName }}
           </button>
-          <button v-for="module in modules" :key="module.id" @click="goToLessons(module.id , module.name)" type="button"
+          <button v-for="module in modules" :key="module.id" @click="goToLessons(module.id, module.name)" type="button"
             class="w-full px-4 py-2 font-medium text-left rtl:text-right border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
             {{ module.name }}
           </button>
@@ -42,7 +43,11 @@ export default {
       const courseId = localStorage.getItem('courseId'); // Retrieve the courseId from localStorage
       try {
         const response = await axios.get(`http://localhost:8000/api/modules/${courseId}`);
+        console.log(response.data);
         modules.value = response.data.modules; // Adjust based on your actual API response
+        if (response.data.status === 'error') {
+          error.value = response.data.message
+        }
       } catch (err) {
         error.value = err.message; // Set error message
       } finally {
@@ -53,8 +58,8 @@ export default {
     onMounted(() => {
       loadModule(); // Load modules when the component is mounted
     });
-    const goToLessons = (moduleId,moduleName) => {
-      localStorage.setItem('moduleId', moduleId); 
+    const goToLessons = (moduleId, moduleName) => {
+      localStorage.setItem('moduleId', moduleId);
       localStorage.setItem('moduleName', moduleName);
       router.push({ name: 'LessonTopic' }); // Navigate to Module page using the router
     };

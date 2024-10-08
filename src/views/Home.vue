@@ -20,6 +20,9 @@
     </div>
 
     <div class="card-container grid grid-cols-1 md:grid-cols-2 gap-4 w-full p-16">
+      <div v-if="error">
+        <h3>{{ error }}</h3>
+      </div>
       <div v-for="course in courses" :key="course.id" class="p-6 bg-white border border-gray-200 rounded-lg shadow">
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ course.name }}</h5>
         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology
@@ -46,6 +49,7 @@ import { useRouter } from 'vue-router'; // Import useRouter
 export default {
   setup() {
     const courses = ref([]);
+    const error = ref();
     const router = useRouter(); // Use useRouter to access the router
 
     // Load courses when the component is mounted
@@ -65,10 +69,13 @@ export default {
 
 
         if (apiResponse.data.status === 'success' && apiResponse.data.courses.length > 0) {
-          courses.value = apiResponse.data.courses; // Set the courses data
+          courses.value = apiResponse.data.courses;
         }
-      } catch (error) {
-        console.error('Error:', error);
+        if (apiResponse.data.status === 'error') {
+          error.value = apiResponse.data.message;
+        }
+      } catch (err) {
+        error.value = err.message;
       }
     };
 
@@ -81,6 +88,7 @@ export default {
     return {
       courses,
       goToModule,
+      error,
     };
   },
   name: 'HomePage',
